@@ -13,7 +13,8 @@
             flex-direction: column;
             align-items: center;
             font-family: Arial, sans-serif;
-            color: #003366;
+            color: #000000;
+            background-color: #e3ebf8
         }
 
         #auth-bar {
@@ -94,7 +95,7 @@
             left: 50%;
             transform: translateX(-50%);
             animation: bounce 2s infinite;
-            font-size: 30px;
+            font-size: 70px;
             color: white;
             opacity: 0.8;
             cursor: pointer;
@@ -114,19 +115,20 @@
             width: 100%;
             flex-wrap: wrap;
             justify-content: space-evenly;
+            
         }
 
-        .form-container {
+        .boxContainer {
             width: 350px;
             padding: 30px;
-            background-color: white;
+            background-color: rgb(250, 250, 250);
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
             text-align: center;
             margin-bottom: 20px;
         }
 
-        .form-container h2 {
+        .boxTitle {
             margin-bottom: 20px;
             color: #003366;
         }
@@ -139,7 +141,7 @@
             font-size: 16px;
             border: 2px solid #003366;
             border-radius: 5px;
-            background-color: #f8fcff;
+            background-color: #ffffff;
             transition: all 0.3s ease;
         }
 
@@ -206,10 +208,10 @@
         }
 
         .security-tips {
-            width: 100px;
+            width: 160px;
             background-color: #003366;
             color: white;
-            padding: 20px;
+            padding: 5px;
             border-radius: 10px 0 0 10px;
             display: flex;
             flex-direction: column;
@@ -219,7 +221,7 @@
 
         .security-tips-content {
             padding: 15px;
-            background-color: white;
+            background-color: #003366;
             min-height: 100px;
             display: flex;
             align-items: center;
@@ -247,7 +249,7 @@
             display: block;
         }
 
-        .modal {
+        .savePopup {
             display: none;
             position: fixed;
             z-index: 1;
@@ -258,7 +260,7 @@
             background-color: rgba(0,0,0,0.4);
         }
 
-        .modal-content {
+        .savePopupContent {
             background-color: #fefefe;
             margin: 15% auto;
             padding: 20px;
@@ -287,7 +289,7 @@
                 gap: 20px;
             }
 
-            .form-container {
+            .boxContainer {
                 width: 80%;
             }
             
@@ -324,17 +326,17 @@
     <button class="viewSavedButton" onclick="checkAuthBeforeViewSaved()">View Saved Messages</button>
     
     <div class="container">
-        <div class="form-container">
+        <div class="boxContainer">
             <h2>Encryption</h2>
             <input type="text" id="encryptKey" placeholder="Enter Key" oninput="formatKeyInput(event)">
             <input type="text" id="encryptMessage" placeholder="Enter Message">
             <div class="button-container">
                 <button onclick="encryptInputValues()">Submit</button>
-                <button id="saveButton" onclick="openSaveModal()">Save</button>
+                <button id="saveButton" onclick="openSavesavePopup()">Save</button>
             </div>
             <pre id="encryptOutput"></pre>
         </div>
-        <div class="form-container">
+        <div class="boxContainer">
             <h2>Decryption</h2>
             <input type="text" id="decryptMessage" placeholder="Enter Message">
             <input type="text" id="decryptKey" placeholder="Enter Key" oninput="formatKeyInput(event)">
@@ -360,15 +362,15 @@
         </div>
     </div>
     
-    <div id="saveModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeSaveModal()">&times;</span>
+    <div id="savesavePopup" class="savePopup">
+        <div class="savePopupContent">
+            <span class="close" onclick="closeSavesavePopup()">&times;</span>
             <h2>Save Encrypted Message</h2>
             <input type="text" id="saveSubject" placeholder="Subject (required)">
             <input type="text" id="saveHint" placeholder="Key Hint (required)">
             <div class="button-container">
                 <button onclick="saveEncryptedMessage()">Save</button>
-                <button onclick="closeSaveModal()">Cancel</button>
+                <button onclick="closeSavesavePopup()">Cancel</button>
             </div>
         </div>
     </div>
@@ -523,7 +525,7 @@
         }
         
         // Save Message Functions
-        function openSaveModal() {
+        function openSavesavePopup() {
             const currentUser = JSON.parse(localStorage.getItem('jimiCurrentUser'));
             if (!currentUser) {
                 if (confirm("You need to login to save messages. Would you like to login now?")) {
@@ -536,11 +538,11 @@
                 alert("Please encrypt a message first before saving.");
                 return;
             }
-            document.getElementById("saveModal").style.display = "block";
+            document.getElementById("savesavePopup").style.display = "block";
         }
 
-        function closeSaveModal() {
-            document.getElementById("saveModal").style.display = "none";
+        function closeSavesavePopup() {
+            document.getElementById("savesavePopup").style.display = "none";
         }
 
         function saveEncryptedMessage() {
@@ -574,7 +576,7 @@
             
             document.getElementById("saveSubject").value = "";
             document.getElementById("saveHint").value = "";
-            closeSaveModal();
+            closeSavesavePopup();
             alert("Message saved successfully!");
         }
         
@@ -601,7 +603,7 @@
             
             document.querySelector('.security-character').textContent = randomChar;
             tipElement.textContent = randomTip;
-            tipElement.style.color = "#0056b3";
+            tipElement.style.color = "#ffffff";
         }
         
         setInterval(showRandomSecurityTip, 10000);
