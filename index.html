@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIMI Encryption</title>
+    <style>
+        /* Body and background effects */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 200vh;
+            font-family: Arial, sans-serif;
+            color: #003366;
+        }
+
+        /* Animated background gradient for logo */
+        .logo-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #964791, #032a52);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .logo {
+            max-width: 50%;
+            height: auto;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 50px;
+        }
+
+        .form-container {
+            width: 350px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #003366;
+        }
+
+        input {
+            display: block;
+            width: 300px;
+            padding: 12px;
+            margin: 10px auto;
+            font-size: 16px;
+            border: 2px solid #003366;
+            border-radius: 5px;
+            background-color: #f8fcff;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
+        }
+
+        .button-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 123, 255, 0.5);
+            animation: rippleEffect 0.6s linear;
+        }
+
+        @keyframes rippleEffect {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            text-align: left;
+            max-width: 100%;
+        }
+
+        .instructions {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="Logo.png" alt="Logo" class="logo">
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h2>Encryption</h2>
+            <input type="text" id="encryptKey" placeholder="Enter Key">
+            <input type="text" id="encryptMessage" placeholder="Enter Message">
+            <div class="button-container">
+                <button onclick="encryptInputValues()">Submit</button>
+                <button onclick="clearEncryptInputs()">Clear</button>
+            </div>
+            <pre id="encryptOutput"></pre>
+        </div>
+        <div class="form-container">
+            <h2>Decryption</h2>
+            <input type="text" id="decryptMessage" placeholder="Enter Message">
+            <input type="text" id="decryptKey" placeholder="Enter Key">
+            <div class="button-container">
+                <button onclick="decryptInputValues()">Submit</button>
+                <button onclick="clearDecryptInputs()">Clear</button>
+            </div>
+            <pre id="decryptOutput"></pre>
+        </div>
+    </div>
+    <div class="instructions">
+        <h3>Instructions</h3>
+        <p>1. You can encrypt both letters and numbers. Special characters are also supported.</p>
+        <p>2. To communicate securely, share your encryption key with your friend.</p>
+        <p>3. This tool allows you to securely share private information like addresses and passwords online.</p>
+        <p>4. Ensure both you and your recipient use the same key for encryption and decryption.</p>
+    </div>
+    <script>
+        const charMap = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?.,()*&%$#@[]{}<>-_+=~\"'";
+
+        function convertToNumber(char) {
+            let index = charMap.indexOf(char);
+            return index !== -1 ? (index + 10).toString().padStart(2, '0') : "00";
+        }
+
+        function convertToChar(num) {
+            let index = parseInt(num) - 10;
+            return index >= 0 && index < charMap.length ? charMap[index] : " ";
+        }
+
+        function encryptInputValues() {
+            let key = document.getElementById("encryptKey").value;
+            let message = document.getElementById("encryptMessage").value;
+            
+            let keySum = key.split('')
+            .map(convertToNumber)
+            .reduce((a, b) => a + parseInt(b), 0);
+
+            let messageNum = message.split('')
+            .map(convertToNumber)
+            .join('');
+
+            let encryptedNum = BigInt(messageNum) * BigInt(keySum);
+
+            let encryptedText = encryptedNum.toString()
+            .split('')
+            .map(d => String.fromCharCode(65 + parseInt(d)))
+            .join('');
+
+            document.getElementById("encryptOutput").textContent = encryptedText;
+        }
+
+        function clearEncryptInputs() {
+            document.getElementById("encryptKey").value = "";
+            document.getElementById("encryptMessage").value = "";
+            document.getElementById("encryptOutput").textContent = "";
+        }
+
+        function decryptInputValues() {
+            let key = document.getElementById("decryptKey").value;
+            let encryptedMessage = document.getElementById("decryptMessage").value;
+
+            let keySum = key.split('')
+            .map(convertToNumber)
+            .reduce((a, b) => a + parseInt(b), 0);
+
+            let decryptedNum = BigInt(encryptedMessage.split('')
+            .map(c => (c.charCodeAt(0) - 65)
+            .toString())
+            .join('')) / BigInt(keySum);
+
+            let decryptedText = decryptedNum.toString()
+            .match(/.{1,2}/g).map(convertToChar)
+            .join('');
+
+            document.getElementById("decryptOutput").textContent = decryptedText;
+        }
+
+        function clearDecryptInputs() {
+            document.getElementById("decryptKey").value = "";
+            document.getElementById("decryptMessage").value = "";
+            document.getElementById("decryptOutput").textContent = "";
+        }
+
+        // Ripple effect on button click
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                let rect = button.getBoundingClientRect();
+                let ripple = document.createElement('span');
+                let size = Math.max(rect.width, rect.height);
+                let x = e.clientX - rect.left - size / 2;
+                let y = e.clientY - rect.top - size / 2;
+
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+
+                button.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    </script>
+</body>
+</html>
