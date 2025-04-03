@@ -354,11 +354,29 @@
             <div class="security-tips-content" id="securityTip"></div>
         </div>
         <div class="instructions">
-            <h3>Instructions</h3>
-            <p>1. You can encrypt both letters and numbers. Special characters are also supported.</p>
-            <p>2. To communicate securely, share your encryption key with your friend.</p>
-            <p>3. This tool allows you to securely share private information like addresses and passwords online.</p>
-            <p>4. Ensure both you and your recipient use the same key for encryption and decryption.</p>
+            <h3 style="margin-bottom: 25px;">How to Use JIMI Encryption</h3>
+            <ol style="line-height: 1.8; margin-bottom: 20px;">
+                <li style="margin-bottom: 15px;"><strong>Encrypting a Message:</strong>
+                    <ul style="line-height: 1.6; margin-top: 8px;">
+                        <li style="margin-bottom: 8px;">Enter your secret key </li>
+                        <li style="margin-bottom: 8px;">The Key textbox will automatically convert lowercase letters to uppercase and prevent spaces to ensure consistency in punctuation variations</li>
+                        <li style="margin-bottom: 8px;">Type your message in the "Enter Message" field</li>
+                        <li style="margin-bottom: 8px;">Click <strong>Submit</strong> to generate your encrypted code</li>
+                        <li>Use <strong>Save</strong> to store important messages (login required)</li>
+                    </ul>
+                </li>
+                
+                <li style="margin-bottom: 15px;"><strong>Decrypting a Message:</strong>
+                    <ul style="line-height: 1.6; margin-top: 8px;">
+                        <li style="margin-bottom: 8px;">Paste the encrypted code you received</li>
+                        <li style="margin-bottom: 8px;">Enter the <em>exact same key</em> used to encrypt it</li>
+                        <li>Click <strong>Submit</strong> to reveal the original message</li>
+                    </ul>
+                </li>
+            
+            <p style="margin-top: 25px; font-style: italic; color: #780b70; line-height: 1.6;">
+                Note: Both sender and receiver must use the same key for successful decryption.
+            </p>
         </div>
     </div>
     
@@ -438,7 +456,7 @@
         }
 
         // Encryption/Decryption Functions
-        const charMap = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?.,()*&%$#@[]{}<>-_+=~\"'";
+        const charMap = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?.,()*&%$#@[]{}<>-_+=~^\"'";
 
         function formatKeyInput(event) {
             let input = event.target;
