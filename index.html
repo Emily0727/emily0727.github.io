@@ -64,6 +64,23 @@
             transform: scale(1.05);
         }
 
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
         .logo-container {
             margin-top: 60px; 
             width: 100%;
@@ -115,7 +132,6 @@
             width: 100%;
             flex-wrap: wrap;
             justify-content: space-evenly;
-            
         }
 
         .boxContainer {
@@ -243,12 +259,6 @@
             flex-grow: 1;
         }
 
-        .viewSavedButton {
-            margin: 50px auto;
-            padding: 25px;
-            display: block;
-        }
-
         .savePopup {
             display: none;
             position: fixed;
@@ -312,6 +322,10 @@
 <body>
     <div id="auth-bar">
         <span id="user-greeting"></span>
+        <div class="nav-links">
+            <a href="public.html" class="nav-link">Public Challenges</a>
+            <a href="#" class="nav-link" onclick="checkAuthBeforeViewSaved()">Saved Messages</a>
+        </div>
         <div id="auth-buttons">
             <button id="login-btn">Login</button>
             <button id="logout-btn">Logout</button>
@@ -319,11 +333,9 @@
     </div>
     
     <div class="logo-container">
-        <img src="Logo.png" alt="Logo" class="logo">
+        <img src="Wave.png" alt="Logo" class="logo">
         <div class="scroll-indicator" onclick="scrollToContent()">↓</div>
     </div>
-    
-    <button class="viewSavedButton" onclick="checkAuthBeforeViewSaved()">View Saved Messages</button>
     
     <div class="container">
         <div class="boxContainer">
@@ -332,7 +344,7 @@
             <input type="text" id="encryptMessage" placeholder="Enter Message">
             <div class="button-container">
                 <button onclick="encryptInputValues()">Submit</button>
-                <button id="saveButton" onclick="openSavesavePopup()">Save</button>
+                <button id="saveButton" onclick="openSavePopup()">Save</button>
             </div>
             <pre id="encryptOutput"></pre>
         </div>
@@ -380,15 +392,20 @@
         </div>
     </div>
     
-    <div id="savesavePopup" class="savePopup">
+    <div id="savePopup" class="savePopup">
         <div class="savePopupContent">
-            <span class="close" onclick="closeSavesavePopup()">&times;</span>
+            <span class="close" onclick="closeSavePopup()">&times;</span>
             <h2>Save Encrypted Message</h2>
             <input type="text" id="saveSubject" placeholder="Subject (required)">
             <input type="text" id="saveHint" placeholder="Key Hint (required)">
             <div class="button-container">
                 <button onclick="saveEncryptedMessage()">Save</button>
-                <button onclick="closeSavesavePopup()">Cancel</button>
+                <button onclick="closeSavePopup()">Cancel</button>
+            </div>
+            <div class="button-container" style="margin-top: 10px;">
+                <label>
+                    <input type="checkbox" id="makePublic"> Make this a public challenge
+                </label>
             </div>
         </div>
     </div>
@@ -403,7 +420,6 @@
             const loginBtn = document.getElementById('login-btn');
             const logoutBtn = document.getElementById('logout-btn');
             const saveButton = document.getElementById('saveButton');
-            const viewSavedBtn = document.querySelector('.viewSavedButton');
 
             // Set initial UI state
             if (currentUser) {
@@ -411,13 +427,11 @@
                 loginBtn.style.display = 'none';
                 logoutBtn.style.display = 'block';
                 if (saveButton) saveButton.style.display = 'block';
-                if (viewSavedBtn) viewSavedBtn.style.display = 'block';
             } else if (isGuest) {
                 userGreeting.textContent = 'Guest User';
                 loginBtn.style.display = 'block';
                 logoutBtn.style.display = 'none';
                 if (saveButton) saveButton.style.display = 'none';
-                if (viewSavedBtn) viewSavedBtn.style.display = 'none';
             } else {
                 window.location.href = 'auth.html';
                 return;
@@ -435,7 +449,7 @@
         function logout() {
             localStorage.removeItem('jimiCurrentUser');
             localStorage.removeItem('jimiGuestAccess');
-            window.location.href = 'index.html';
+            window.location.href = 'auth.html';
         }
 
         function scrollToContent() {
@@ -505,36 +519,36 @@
         }
 
         function decryptInputValues() {
-    let key = document.getElementById("decryptKey").value;
-    let encryptedMessage = document.getElementById("decryptMessage").value;
+            let key = document.getElementById("decryptKey").value;
+            let encryptedMessage = document.getElementById("decryptMessage").value;
 
-    if (!key || !encryptedMessage) {
-        alert("Please enter both key and encrypted message");
-        return;
-    }
+            if (!key || !encryptedMessage) {
+                alert("Please enter both key and encrypted message");
+                return;
+            }
 
-    try {
-        let keySum = key.split('')
-            .map(convertToNumber)
-            .reduce((a, b) => a + parseInt(b), 0);
+            try {
+                let keySum = key.split('')
+                    .map(convertToNumber)
+                    .reduce((a, b) => a + parseInt(b), 0);
 
-        let decryptedNum = BigInt(
-            encryptedMessage.split('')
-                .map(c => (c.charCodeAt(0) - 65))
-                .join('')
-        ) / BigInt(keySum);
+                let decryptedNum = BigInt(
+                    encryptedMessage.split('')
+                        .map(c => (c.charCodeAt(0) - 65))
+                        .join('')
+                ) / BigInt(keySum);
 
-        let decryptedText = decryptedNum.toString()
-            .match(/.{1,2}/g)
-            .map(convertToChar)
-            .join('');
+                let decryptedText = decryptedNum.toString()
+                    .match(/.{1,2}/g)
+                    .map(convertToChar)
+                    .join('');
 
-        document.getElementById("decryptOutput").textContent = decryptedText;
-    } catch (e) {
-        alert("Decryption failed. Please check your key and message.");
-        console.error(e);
-    }
-}
+                document.getElementById("decryptOutput").textContent = decryptedText;
+            } catch (e) {
+                alert("Decryption failed. Please check your key and message.");
+                console.error(e);
+            }
+        }
 
         function clearDecryptInputs() {
             document.getElementById("decryptKey").value = "";
@@ -543,7 +557,7 @@
         }
         
         // Save Message Functions
-        function openSavesavePopup() {
+        function openSavePopup() {
             const currentUser = JSON.parse(localStorage.getItem('jimiCurrentUser'));
             if (!currentUser) {
                 if (confirm("You need to login to save messages. Would you like to login now?")) {
@@ -556,11 +570,11 @@
                 alert("Please encrypt a message first before saving.");
                 return;
             }
-            document.getElementById("savesavePopup").style.display = "block";
+            document.getElementById("savePopup").style.display = "block";
         }
 
-        function closeSavesavePopup() {
-            document.getElementById("savesavePopup").style.display = "none";
+        function closeSavePopup() {
+            document.getElementById("savePopup").style.display = "none";
         }
 
         function saveEncryptedMessage() {
@@ -574,6 +588,8 @@
             const subject = document.getElementById("saveSubject").value.trim();
             const hint = document.getElementById("saveHint").value.trim();
             const encryptedMessage = document.getElementById("encryptOutput").textContent;
+            const originalMessage = document.getElementById("encryptMessage").value;
+            const makePublic = document.getElementById("makePublic").checked;
             
             if (!subject || !hint) {
                 alert("Please enter both subject and key hint.");
@@ -587,14 +603,17 @@
                 subject: subject,
                 hint: hint,
                 message: encryptedMessage,
-                date: new Date().toLocaleString()
+                originalMessage: originalMessage,
+                date: new Date().toLocaleString(),
+                isPublic: makePublic
             });
             
             localStorage.setItem('savedMessages', JSON.stringify(savedMessages));
             
             document.getElementById("saveSubject").value = "";
             document.getElementById("saveHint").value = "";
-            closeSavesavePopup();
+            document.getElementById("makePublic").checked = false;
+            closeSavePopup();
             alert("Message saved successfully!");
         }
         
