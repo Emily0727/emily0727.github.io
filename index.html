@@ -197,17 +197,7 @@
             overflow: hidden;
         }
 
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(0, 123, 255, 0.5);
-            animation: rippleEffect 0.6s linear;
-        }
-
-        @keyframes rippleEffect {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(4); opacity: 0; }
-        }
+        
 
         pre {
             white-space: pre-wrap;
@@ -442,7 +432,6 @@
             logoutBtn.addEventListener('click', logout);
             
             // Initialize app features
-            initRippleEffects();
             showRandomSecurityTip();
         });
 
@@ -470,7 +459,7 @@
         }
 
         // Encryption/Decryption Functions
-        const charMap = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?.,()*&%$#@[]{}<>-_+=~^\"'";
+        const charMap = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/’!?.,()*&%$#@[]{}<>-_+=~^\"'";
 
         function formatKeyInput(event) {
             let input = event.target;
@@ -645,29 +634,7 @@
         
         setInterval(showRandomSecurityTip, 10000);
         
-        // Ripple Effect
-        function initRippleEffects() {
-            document.querySelectorAll('button').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    let rect = button.getBoundingClientRect();
-                    let ripple = document.createElement('span');
-                    let size = Math.max(rect.width, rect.height);
-                    let x = e.clientX - rect.left - size / 2;
-                    let y = e.clientY - rect.top - size / 2;
-
-                    ripple.style.width = ripple.style.height = size + 'px';
-                    ripple.style.left = x + 'px';
-                    ripple.style.top = y + 'px';
-                    ripple.classList.add('ripple');
-
-                    button.appendChild(ripple);
-
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
-        }
+        
     </script>
 </body>
 </html>
