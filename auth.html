@@ -147,55 +147,41 @@
             }
         }
         
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
         
-        async function register() {
+        function register() {
             const username = document.getElementById('register-username').value.trim();
             const password = document.getElementById('register-password').value;
             const confirm = document.getElementById('register-confirm').value;
             const errorElement = document.getElementById('register-error');
             
+            // Validation (same as before)
             if (!username || !password || !confirm) {
                 errorElement.textContent = 'Please fill in all fields';
                 return;
             }
-            
             if (password !== confirm) {
                 errorElement.textContent = 'Passwords do not match';
                 return;
             }
-            
             if (password.length < 8) {
                 errorElement.textContent = 'Password must be at least 8 characters';
                 return;
             }
-            
-            const hashedPassword = await hashPassword(password);
+
+            // Store plaintext password (for local testing only!)
             const users = JSON.parse(localStorage.getItem('jimiUsers')) || [];
-            
             if (users.some(u => u.username === username)) {
                 errorElement.textContent = 'Username already exists';
                 return;
             }
-            
-            users.push({
-                username,
-                password: hashedPassword,
-                createdAt: new Date().toISOString()
-            });
-            
+
+            users.push({ username, password }); // No hashing
             localStorage.setItem('jimiUsers', JSON.stringify(users));
             alert('Registration successful! Please login.');
             switchTab('login');
-        }
-        
-        async function login() {
+            }
+
+            function login() {
             const username = document.getElementById('login-username').value.trim();
             const password = document.getElementById('login-password').value;
             const errorElement = document.getElementById('login-error');
@@ -204,23 +190,18 @@
                 errorElement.textContent = 'Please fill in all fields';
                 return;
             }
-            
-            const hashedPassword = await hashPassword(password);
+
             const users = JSON.parse(localStorage.getItem('jimiUsers')) || [];
-            const user = users.find(u => u.username === username && u.password === hashedPassword);
-            
+            const user = users.find(u => u.username === username && u.password === password); // Plaintext check
+
             if (!user) {
                 errorElement.textContent = 'Invalid username or password';
                 return;
             }
-            
-            localStorage.setItem('jimiCurrentUser', JSON.stringify({
-                username,
-                loggedInAt: new Date().toISOString()
-            }));
-            
+
+            localStorage.setItem('jimiCurrentUser', JSON.stringify({ username }));
             window.location.href = 'index.html';
-        }
+            }
         
         function continueAsGuest() {
             localStorage.setItem('jimiGuestAccess', 'true');
